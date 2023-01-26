@@ -42,9 +42,6 @@ async function handleSubmit(event) {
                 page: page,
                 
             }
-
-            
-            
         }) 
 
         
@@ -56,7 +53,7 @@ async function handleSubmit(event) {
             new SimpleLightbox('.gallery a');
         
             
-        } else if (data.hits.length <= 39) {
+        } else if (data.hits.length < 39) {
             btnEl.style.display = 'none';
             galleryEl.innerHTML = createMarkup(data.hits);
        
