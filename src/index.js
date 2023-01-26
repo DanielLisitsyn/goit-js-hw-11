@@ -20,6 +20,8 @@ btnEl.style.display = 'none';
 let page = 1;
 
 async function handleSubmit(event) { 
+
+
     page = 1;
     event.preventDefault();
     console.log(inputEl.value)
@@ -31,6 +33,7 @@ async function handleSubmit(event) {
     }
 
     try {
+        localStorage.setItem('savedValue', JSON.stringify(inputEl.value));
         const {data} = await axios.get(BASE_URL, {
             params: {
                 key: API_KEY,
@@ -45,15 +48,14 @@ async function handleSubmit(event) {
         }) 
 
         
-        
-        if (data.hits.length > 39){
+        if (data.totalHits / page > 40){
           btnEl.style.display = 'flex';
             galleryEl.innerHTML = createMarkup(data.hits);
        
             new SimpleLightbox('.gallery a');
         
             
-        } else if (data.hits.length < 39) {
+        } else if (data.totalHits / page <= 40) {
             btnEl.style.display = 'none';
             galleryEl.innerHTML = createMarkup(data.hits);
        
@@ -67,34 +69,53 @@ async function handleSubmit(event) {
     catch(error) {
         Notiflix.Notify.warning('Sorry, there are no images matching your search query. Please try again.');
     }
+
+
    
 }
 
 
 async function handleLoadMoreBtn(event) {
    
-    page += 1;
-const {data} = await axios.get(BASE_URL, {
+    try {
+        page += 1;
+        const { data } = await axios.get(BASE_URL, {
             params: {
                 key: API_KEY,
-                q: inputEl.value,
+                q: localStorage.getItem('savedValue'),
                 image_type: 'photo',
                 orientation: 'horizontal',
                 sefesearch: true,
                 per_page: 40,
                 page: page,
                 
-    }     
+            }
     
-}).catch(err => {
-    if (err) {
-        btnEl.style.display = 'none';
+        })
+       
+        if (data.totalHits / page > 40) {
+            btnEl.style.display = 'flex';
+             galleryEl.insertAdjacentHTML('beforeend', createMarkup(data.hits))
+       
+            new SimpleLightbox('.gallery a');
+        
+            
+        } else if (data.totalHits / page <= 40) {
+            btnEl.style.display = 'none';
+             galleryEl.insertAdjacentHTML('beforeend', createMarkup(data.hits))
+       
+            new SimpleLightbox('.gallery a');
+        }
+        else {
+            Notiflix.Notify.warning('Sorry, there are no images matching your search query. Please try again.');
+            
+        }
+    } catch (error) {
+        console.log(error)
     }
-})
-    
-    galleryEl.insertAdjacentHTML('beforeend', createMarkup(data.hits))
-           
+          
 }
+
 
 
 
