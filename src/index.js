@@ -49,15 +49,18 @@ async function handleSubmit(event) {
 
         
         
-        if (data.hits.length > 0){
+        if (data.hits.length > 39){
           btnEl.style.display = 'flex';
             galleryEl.innerHTML = createMarkup(data.hits);
        
             new SimpleLightbox('.gallery a');
         
             
-        } else if (data.hits.length < 39) {
-             btnEl.style.display = 'none';
+        } else if (data.hits.length <= 39) {
+            btnEl.style.display = 'none';
+            galleryEl.innerHTML = createMarkup(data.hits);
+       
+            new SimpleLightbox('.gallery a');
         } 
             else {
                 Notiflix.Notify.warning('Sorry, there are no images matching your search query. Please try again.');
